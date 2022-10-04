@@ -31,6 +31,39 @@ class Product extends Model
     ];
 
     /**
+     *  Observe this model being deleted and delete the child shifts
+     * @return void
+     */
+    public static function boot ():void
+    {
+        parent::boot();
+
+        self::deleting(function (Product $product) {
+
+            foreach ($product->comments as $comment)
+            {
+                $comment->delete();
+            }
+        });
+    }
+    /**
+     * Simple function that adds a new like to the targeted comment
+     * @return void
+     */
+    public function addLike(): void
+    {
+        $this->increment('likes');
+    }
+
+    /**
+     * @return void
+     */
+    public function addDislike():void
+    {
+        $this->increment('dislikes');
+    }
+
+    /**
      * Product Category
      * @return BelongsTo
      */
