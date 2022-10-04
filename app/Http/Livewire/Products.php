@@ -59,7 +59,7 @@ class Products extends Component
     public $migrationTable;
     public $hasRun;
     public $errorMessage;
-    public $project, $user_id, $product_category_id;
+    public $project, $user_id, $product_category_id, $userComments, $userProducts;
     // params related to product, provides 2-way data binding with product form when performing patch & store crud operations
     public $name, $product_image, $likes, $dislikes, $price, $sales, $description, $status;
 
@@ -82,6 +82,11 @@ class Products extends Component
      */
     public function mount($action = null, $user_id = null, $product_id = null): void
     {
+
+        // get the url of the server, where the app is running
+        $this->actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $this->homeLink = "https://$_SERVER[HTTP_HOST]";
+        $this->root = URL::to('/');
 
         // we first check if a table exists on database
         $this->migrationTable = Schema::hasTable('products');
@@ -132,18 +137,12 @@ class Products extends Component
             // get products & comments for a provided user_id
             if ($user_id) {
 
-                $this->products = Product::with('comments')
-                    ->where('user_id', $user_id)
-                    ->get();
+                $this->viewUserProfile($user_id);
 
             }
 
             $this->categories = ProductCategory::pluck('name', 'id');
             $this->users = User::pluck('name', 'id');
-            // get the url of the server, where the app is running
-            $this->actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-            $this->homeLink = "https://$_SERVER[HTTP_HOST]";
-            $this->root = URL::to('/');
 
         }
 
@@ -246,6 +245,43 @@ class Products extends Component
         $this->homeDescription = 'This is my submission to Tradefull assestment, for BackEnd Developer role!';
         $this->emitSelf('refreshComponent');
         $this->emit('refreshComponent');
+
+    }
+
+    /**
+     * View userProfile by useId
+     * @param $user_id
+     * @return void
+     */
+    public function viewUserProfile($user_id): void
+    {
+
+        $this->homeTitle = 'User Profile Component';
+        $this->homeDescription = 'You are viewing the user profile. Here you can see the list of comments & products created by this user.';
+
+        $this->user = User::where('id', $user_id)
+            ->with(['comments', 'products'])
+            ->first();
+
+        if (!$this->user) {
+
+            $this->errorMessage = 'This user is not found!!';
+
+        } else {
+
+            $this->randomImage = $this->user->profile_url;
+            $this->randomName = $this->user->name;
+            $this->jobTitle = $this->user->job_title;
+            $this->gender = $this->user->gender;
+            $this->email = $this->user->email;
+            $this->phone = $this->user->phone;
+            $this->action = 'viewProfile';
+            $this->productsCount = $this->user->products()->count();
+            $this->commentsCount = $this->user->comments()->count();
+            $this->userComments = $this->user->comments;
+            $this->userProducts = $this->user->products;
+
+        }
 
     }
 
@@ -516,6 +552,8 @@ class Products extends Component
             $this->product->addDislike();
 
         }
+
+        $this->emitSelf('refreshChanges');
 
     }
 
