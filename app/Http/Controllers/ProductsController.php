@@ -52,9 +52,9 @@ class ProductsController extends Controller
         // $homeDescription = $homeSeo[0]['description'];
         // $homeKeywords = $homeSeo[0]['keywords'];
         // $homeImage = $homeLink."/".$homeSeo[0]['page_img'];
-        $homeTitle = 'Take Home Assestment';
-        $homeShareTitle = 'Take Home Assestment - BackEnd Developer - JD Hawkins';
-        $homeDescription = 'This is an assestment to show my skill as a Laravel Developer';
+        $homeTitle = 'Take Home assessment';
+        $homeShareTitle = 'Take Home assessment - BackEnd Developer - JD Hawkins';
+        $homeDescription = 'This is an assessment to show my skill as a Laravel Developer';
         $homeKeywords = 'developer, assetment, livewire, laravel, mysql, php8';
         $homeImage = null;
 

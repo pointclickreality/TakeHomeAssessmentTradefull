@@ -162,7 +162,7 @@
                                 <div class="mb-15">
                                     <!--begin::Title-->
                                     <h1 class="fs-2x text-dark mb-6">Welcome!! Laravel Back-End Developer Take Home
-                                        Assestment - by JD Hawkins</h1>
+                                        Assessment - by JD Hawkins</h1>
                                     <!--end::Title-->
                                     <!--begin::Text-->
                                     <div class="fs-5 text-gray-600 fw-semibold">
@@ -213,7 +213,7 @@
                                     </div>
                                     <!--end::Text-->
                                     <!--begin::Title-->
-                                    <h2 class="fw-bold text-dark mb-8">Skills Shown In This Assestment:</h2>
+                                    <h2 class="fw-bold text-dark mb-8">Skills Shown In This Assessment:</h2>
                                     <!--end::Title-->
                                     <!--begin::List-->
                                     <ul class="fs-4 fw-semibold mb-6">

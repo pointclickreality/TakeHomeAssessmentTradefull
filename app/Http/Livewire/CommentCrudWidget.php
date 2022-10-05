@@ -41,9 +41,9 @@ class CommentCrudWidget extends Component
     public $categories;
     public $reasonMessage = 'There a no users in the Database. Please run migration & seeder file. Follow link below for docs.';
     public $showDocsButton = false;
-    public $homeTitle = 'Take Home Assestment';
-    public $homeShareTitle = 'Senior BackEnd Developer - Assestment';
-    public $homeDescription = 'This is my take home assestment as proof of my skills as a Full Stack Developer appllying for BackEnd Developer Laravel role.';
+    public $homeTitle = 'Take Home Assessment';
+    public $homeShareTitle = 'Senior BackEnd Developer - Assessment';
+    public $homeDescription = 'This is my take home assessment as proof of my skills as a Full Stack Developer appllying for BackEnd Developer Laravel role.';
     public $homeImage;
     public $homeKeyWords;
     public $likesCount = 0;
