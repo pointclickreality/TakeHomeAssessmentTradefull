@@ -34,18 +34,34 @@ class Product extends Model
      *  Observe this model being deleted and delete the child shifts
      * @return void
      */
-    public static function boot ():void
+    public static function boot(): void
     {
         parent::boot();
 
         self::deleting(function (Product $product) {
 
-            foreach ($product->comments as $comment)
-            {
+            foreach ($product->comments as $comment) {
                 $comment->delete();
             }
         });
     }
+
+    /**
+     * Get collection of comments by given product id
+     * @param $product_id
+     * @return mixed
+     */
+    static function getComments($product_id)
+    {
+
+        $comments = Comment::with(['author'])
+            ->active()
+            ->where('product_id', $product_id)
+            ->get();
+
+        return $comments;
+    }
+
     /**
      * Simple function that adds a new like to the targeted comment
      * @return void
@@ -58,7 +74,7 @@ class Product extends Model
     /**
      * @return void
      */
-    public function addDislike():void
+    public function addDislike(): void
     {
         $this->increment('dislikes');
     }
@@ -87,6 +103,7 @@ class Product extends Model
      */
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class, 'product_id', 'id');
+        return $this->hasMany(Comment::class, 'product_id', 'id')
+            ->orderBy('created_at', 'asc');
     }
 }
