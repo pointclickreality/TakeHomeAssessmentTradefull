@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Comment;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\User;
 use Illuminate\Support\Facades\URL;
@@ -42,7 +43,7 @@ class CommentCrudWidget extends Component
     public $showDocsButton = false;
     public $homeTitle = 'Take Home Assestment';
     public $homeShareTitle = 'Senior BackEnd Developer - Assestment';
-    public $homeDescription = 'This is my take home assetment as proof of my skills as a Full Stack Developer appllying for BackEnd Developer Laravel role.';
+    public $homeDescription = 'This is my take home assestment as proof of my skills as a Full Stack Developer appllying for BackEnd Developer Laravel role.';
     public $homeImage;
     public $homeKeyWords;
     public $likesCount = 0;
@@ -55,10 +56,8 @@ class CommentCrudWidget extends Component
     public $avatarsFolder = '/assets/media/avatars/';
     public $url;
     public $profile_url = '300-1.jpg';
-
+    public $code;
     protected $paginationTheme = 'bootstrap';
-
-
     protected $rules = [
 
         'reply' => 'required_without:body',
@@ -83,7 +82,7 @@ class CommentCrudWidget extends Component
      * Generate a collection of random images that will be used later by the app when assigning profile image
      * @return void
      */
-    public function mount($product_id = null):void
+    public function mount($product_id = null, $user_id=null): void
     {
 
         $this->actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
@@ -94,6 +93,12 @@ class CommentCrudWidget extends Component
         if ($product_id) {
 
             $this->product_id = $product_id;
+
+        }
+
+        if ($user_id) {
+
+            $this->user_id = $user_id;
 
         }
 
@@ -126,8 +131,7 @@ class CommentCrudWidget extends Component
             $this->commentsCount = $this->randomUser->comments()->count();
             $this->reasonMessage = 'Users Now Exist In The Database, Any comment you create will be posted as a random user that exists in Database.';
 
-        }
-        else {
+        } else {
 
             $this->user_id = null;
             $this->showDocsButton = true;
@@ -140,26 +144,9 @@ class CommentCrudWidget extends Component
     public function render()
     {
 
-        if ($this->withTrashed) {
 
-            $this->comments = Comment::withTrashed()
-                ->with(['author', 'replies'])
-                ->get();
-
-        }
-        else {
-
-            // get active comments only
-            $this->comments = Comment::with(['author'])
-                ->active()
-                ->get();
-
-        }
-
-        if ($this->product_id) {
-
-            $this->comments = Comment::where('product_id', $this->product_id)->get();
-
+        if ($this->product_id){
+            $this->comments = Product::getComments($this->product_id);
         }
 
         return view('livewire.comment-crud-widget');
@@ -170,21 +157,24 @@ class CommentCrudWidget extends Component
      * Increase the number of likes
      * @return void
      */
-    public function increaseLikes($comment_id)
+    public function increaseLikes($comment_id): void
     {
         $comment = Comment::find($comment_id);
 
         if (!$comment) {
 
+            $this->code = 'danger';
             session()->flash('message', 'Comment not found.');
 
-        }
-        else {
+        } else {
 
             $comment->addLike();
+            $this->code = 'success';
+            session()->flash('message', 'Like Added.');
         }
 
         $this->emitSelf('refreshComponent');
+        $this->emit('refreshComponent');
 
     }
 
@@ -192,22 +182,26 @@ class CommentCrudWidget extends Component
      * Increase the number of dislikes
      * @return void
      */
-    public function increaseDislikes($comment_id)
+    public function increaseDislikes($comment_id): void
     {
 
         $comment = Comment::find($comment_id);
 
         if (!$comment) {
+            $this->code = 'danger';
+            session()->flash('message', 'Something Went Wrong, Try Again.');
 
-            session()->flash('message', 'Comment not found.');
-
-        }
-        else {
+        } else {
 
             $comment->addDislike();
-            $this->emitSelf('refreshComponent');
+            $this->code = 'success';
+            session()->flash('message', 'Dislike Added!');
+
 
         }
+
+        $this->emitSelf('refreshComponent');
+        $this->emit('refreshComponent');
 
     }
 
@@ -215,7 +209,7 @@ class CommentCrudWidget extends Component
      * Create A New Comment
      * @return void
      */
-    public function createNewComment()
+    public function createNewComment(): void
     {
         $this->validate();
 
@@ -224,29 +218,41 @@ class CommentCrudWidget extends Component
         } else {
             $body = $this->body;
         }
+
         $comment = new Comment;
         $comment->body = $body;
         $comment->user_id = $this->user_id;
         $comment->product_id = $this->product_id;
+
         if ($this->comment_id) {
+
             $comment->comment_id = $this->comment_id;
+
         }
+
         $comment->save();
 
-        if (!$this->comment) {
+        if (!$comment) {
+
+            $this->code = 'danger';
             session()->flash('message', 'Something went wrong, try again.');
 
         }
         else {
 
+            $this->reset('body', 'reply');
             $this->comment = $comment;
-            session()->flash('message', 'New comment created.');
-            $this->emitSelf('refreshComponent');
+            $this->code = 'success';
+            session()->flash('message', 'New Comment Created!');
+
         }
+
+        $this->emitSelf('refreshComponent');
+        $this->emit('refreshComponent');
 
     }
 
-    public function addReply($comment_id)
+    public function addReply($comment_id): void
     {
         $this->validate();
 
@@ -258,18 +264,20 @@ class CommentCrudWidget extends Component
 
         if (!$this->comment) {
 
-            session()->flash('message', 'Something went wrong, try again.');
+            $this->code = 'danger';
+            session()->flash('message', 'Comment Not Created, please try again');
 
         }
         else {
 
             $this->comment = $comment;
             $this->replies = $comment->replies;
+            $this->code = 'success';
+            session()->flash('message', 'New Comment Added!');
 
-            session()->flash('message', 'New reply added.');
-            $this->emitSelf('refreshComponent');
         }
 
+        $this->emitSelf('refreshComponent');
     }
 
     public function showComment($comment_id)
@@ -282,8 +290,11 @@ class CommentCrudWidget extends Component
 
         if (!$this->comment) {
 
-            session()->flash('message', 'Comment is not found!!.');
-        } else {
+            $this->code = 'danger';
+            session()->flash('message', 'Comment Not Found!');
+
+        }
+        else {
 
             $this->body = $this->comment->body;
             $this->profile_url = $this->comment->profile_url;
@@ -305,9 +316,11 @@ class CommentCrudWidget extends Component
 
         if (!$this->comment) {
 
-            session()->flash('message', 'Comment is not found!!.');
+            $this->code = 'danger';
+            session()->flash('message', 'Comment Not Found!');
 
-        } else {
+        }
+        else {
 
             $this->body = $this->comment->body;
             $this->randomImage = $this->url . '' . $this->comment->author->profile_url;
@@ -321,20 +334,33 @@ class CommentCrudWidget extends Component
      * @param $comment_id
      * @return void
      */
-    public function updateComment($comment_id)
+    public function updateComment($comment_id): void
     {
 
         $this->comment = Comment::with('replies')
             ->where('id', $comment_id)
             ->first();
 
-        $this->comment->update([
-            'body' => $this->body,
-        ]);
+        if (!$this->comment) {
 
-        $this->reset();
+            $this->code = 'danger';
+            session()->flash('message', 'Comment Not Found!');
+
+        }
+        else {
+
+            $this->comment->update([
+                'body' => $this->body,
+            ]);
+
+            $this->code = 'success';
+            session()->flash('message', 'Comment Updated!');
+            $this->reset();
+
+
+        }
+
         $this->emitSelf('refreshComponent');
-
     }
 
     /**
@@ -342,7 +368,7 @@ class CommentCrudWidget extends Component
      * @param $comment_id
      * @return void
      */
-    public function deleteComment($comment_id)
+    public function deleteComment($comment_id): void
     {
 
         if ($comment_id) {
@@ -351,9 +377,11 @@ class CommentCrudWidget extends Component
                 ->delete();
         }
 
-        session()->flash('deleted', 'Comment Deleted');
+        $this->code = 'success';
+        session()->flash('message', 'Comment Deleted!');
         $this->emitSelf('refreshComponent');
 
     }
+
 
 }

@@ -21,13 +21,12 @@ class Products extends Component
     public $homeTitle = 'Products List';
 
     // params that are updates as the state of the component is changed
-    public $homeShareTitle = 'Senior BackEnd Developer - Assestment';
+    public $homeShareTitle = 'Ss';
     public $homeDescription;
     public $homeImage;
     public $homeKeyWords;
     public $root;
     public $product;
-
     // presets that help us get url pattern for product & user images
     public $action = 'viewHome';
     public $actual_link;
@@ -40,9 +39,9 @@ class Products extends Component
     public $withTrashed;
     public $categories = [];
     public $sortColumn = 'name';
+    public $route = 'Livewire';
     // set default search field
     public $sortDirection = 'asc';
-
     public $searchColumns = [
         'name' => '',
         'price' => ['', ''],
@@ -59,7 +58,8 @@ class Products extends Component
     public $migrationTable;
     public $hasRun;
     public $errorMessage;
-    public $project, $user_id, $product_category_id, $userComments, $userProducts;
+    public $code;
+    public $project, $user_id, $product_category_id, $userComments, $userProducts, $commentsCount, $productsCount, $likesCount, $dislikesCount;
     // params related to product, provides 2-way data binding with product form when performing patch & store crud operations
     public $name, $product_image, $likes, $dislikes, $price, $sales, $description, $status;
 
@@ -94,9 +94,11 @@ class Products extends Component
 
         if ($this->migrationTable == false) {
 
-            $this->errorMessage = 'It looks like your app is missing the required database & seeder. Please use the button below to automatically run migration & seeder. Upon refresh, you will see the newly created data!';
+            $this->code = 'danger';
+            session()->flash('message', 'It looks like your app is missing the required database & seeder. Please use the button below to automatically run migration & seeder. Upon refresh, you will see the newly created data!');
 
-        } else {
+        }
+        else {
 
             /**
              * Based on the params present in the incoming request,
@@ -128,7 +130,8 @@ class Products extends Component
 
                 }
 
-            } else {
+            }
+            else {
 
                 // set default values, if not product id is present
                 $this->resetResults();
@@ -136,7 +139,6 @@ class Products extends Component
             }
             // get products & comments for a provided user_id
             if ($user_id) {
-
                 $this->viewUserProfile($user_id);
 
             }
@@ -162,9 +164,11 @@ class Products extends Component
 
         if (!$this->product) {
 
-            $this->errorMessage = "That product is not found!!";
+            $this->code = 'danger';
+            session()->flash('message', 'The product is Not Found !');
 
-        } else {
+        }
+        else {
 
             $this->product_id = $product_id;
             // set the proper params to update the component state, so that it will be reflected on view dynamically :)
@@ -188,23 +192,16 @@ class Products extends Component
 
         if (!$this->product) {
 
-            $this->errorMessage = "That product is not found!!";
+            $this->code = 'danger';
+            session()->flash('message', 'The product is Not Found !');
 
-        } else {
+        }
+        else {
 
             $this->product_id = $product_id;
             $this->action = 'editProduct';
             //set params to reuse create form, but for editing, by prefilling the params the form expects
-            $this->name = $this->product->name;
-            $this->user_id = $this->product->user_id;
-            $this->product_category_id = $this->product->product_category_id;
-            $this->product_image = $this->product->product_image;
-            $this->dislikes = $this->product->dislikes;
-            $this->likes = $this->product->likes;
-            $this->sales = $this->product->sales;
-            $this->description = $this->product->description;
-            $this->status = $this->product->status;
-            $this->price = $this->product->price;
+            $this->fill($this->product);
             $this->homeTitle = 'Editing Product ' . $this->product->name;
             $this->homeDescription = 'You are currently editing an existing product!';
 
@@ -220,14 +217,20 @@ class Products extends Component
     public function deleteProduct($product_id): void
     {
 
+
         if ($product_id) {
 
             $product = Product::findOrFail($product_id)->delete();
+            $this->code = 'danger';
+            session()->flash('message', 'Product has been deleted!');
 
-            $this->action = 'viewHome';
-            session()->flash('message', 'Product Deleted!.');
             $this->resetResults();
-            redirect()->route('products.index');
+
+            if ($this->route == 'Controller') {
+
+                redirect()->route('products.index');
+
+            }
 
         }
 
@@ -258,14 +261,15 @@ class Products extends Component
 
         $this->homeTitle = 'User Profile Component';
         $this->homeDescription = 'You are viewing the user profile. Here you can see the list of comments & products created by this user.';
-
+        $this->action = 'viewProfile';
         $this->user = User::where('id', $user_id)
             ->with(['comments', 'products'])
             ->first();
 
         if (!$this->user) {
 
-            $this->errorMessage = 'This user is not found!!';
+            $this->code = 'danger';
+            session()->flash('message', 'The user is Not Found !');
 
         } else {
 
@@ -275,9 +279,22 @@ class Products extends Component
             $this->gender = $this->user->gender;
             $this->email = $this->user->email;
             $this->phone = $this->user->phone;
-            $this->action = 'viewProfile';
-            $this->productsCount = $this->user->products()->count();
-            $this->commentsCount = $this->user->comments()->count();
+
+
+            if ($this->user->comments()->count() > 0){
+
+                $this->productsCount = $this->user->products()->count();
+                $this->commentsCount = $this->user->comments()->count();
+                $this->likesCount = $this->user->comments()->sum('likes');
+                $this->dislikesCount = $this->user->comments()->sum('dislikes');
+            }
+            else{
+
+                $this->productsCount = 0;
+                $this->likesCount = 0;
+                $this->dislikesCount = 0;
+            }
+
             $this->userComments = $this->user->comments;
             $this->userProducts = $this->user->products;
 
@@ -299,7 +316,8 @@ class Products extends Component
                 ->with('category')
                 ->withTrashed();
 
-        } else {
+        }
+        else {
 
             // get active products only
             $products = Product::with([
@@ -331,7 +349,8 @@ class Products extends Component
                     }
 
                     // get products greater or equal to the given numeric values
-                } elseif ($column == 'sales') {
+                }
+                elseif ($column == 'sales') {
 
                     if (is_numeric($value)) {
 
@@ -339,7 +358,8 @@ class Products extends Component
 
                     }
 
-                } elseif ($column == 'likes') {
+                }
+                elseif ($column == 'likes') {
 
                     if (is_numeric($value)) {
 
@@ -347,7 +367,8 @@ class Products extends Component
 
                     }
 
-                } elseif ($column == 'dislikes') {
+                }
+                elseif ($column == 'dislikes') {
 
                     if (is_numeric($value)) {
 
@@ -355,7 +376,8 @@ class Products extends Component
 
                     }
 
-                } elseif ($column == 'comments') {
+                }
+                elseif ($column == 'comments') {
 
                     if (is_numeric($value)) {
 
@@ -363,11 +385,13 @@ class Products extends Component
 
                     }
 
-                } else if ($column == 'product_category_id') {
+                }
+                else if ($column == 'product_category_id') {
 
                     $products->where($column, $value);
 
-                } else {
+                }
+                else {
 
                     $products->where('products.' . $column, 'LIKE', '%' . $value . '%');
 
@@ -384,7 +408,8 @@ class Products extends Component
 
             $products;
 
-        } else {
+        }
+        else {
 
             $products = [];
 
@@ -444,11 +469,13 @@ class Products extends Component
 
         // create new product if one does not already exist matching the expected params
         $product = Product::firstOrNew([
-            'name' => $this->name,
-            'price' => $this->price,
-            'status' => $this->status,
-            'product_category_id' => $this->product_category_id,
+            'uuid' => $this->uuid,
         ]);
+
+        $product->name = $this->name;
+        $product->price = $this->price;
+        $product->status = $this->status;
+        $product->product_category_id = $this->product_category_id;
 
         // only update these params if the incoming data is expecting to create the product
         if ($this->action == 'createProduct') {
@@ -459,7 +486,8 @@ class Products extends Component
             $product->likes = 0;
             $product->sales = 0;
 
-        } else {
+        }
+        else {
 
             $product->user_id = $this->product->user_id;
             $product->likes = $this->product->likes;
@@ -482,6 +510,56 @@ class Products extends Component
     }
 
     /**
+     * Update the product
+     * @return void
+     */
+    public function updateProduct(): void
+    {
+
+        // check validation
+        $this->validate();
+
+        // create new product if one does not already exist matching the expected params
+        $product = Product::findOrFail($this->product_id);
+        $product->name = $this->name;
+        $product->price = $this->price;
+        $product->status = $this->status;
+        $product->product_category_id = $this->product_category_id;
+
+        // only update these params if the incoming data is expecting to create the product
+        if ($this->action == 'createProduct') {
+
+            // save the other params associated with product, such as user & category
+            $product->user_id = $this->user_id;
+            $product->dislikes = 0;
+            $product->likes = 0;
+            $product->sales = 0;
+
+        }
+        else {
+
+            $product->user_id = $this->product->user_id;
+            $product->likes = $this->product->likes;
+            $product->dislikes = $this->product->dislikes;
+            $product->sales = $this->product->sales;
+
+        }
+
+        $product->description = $this->description;
+        $product->product_image = $this->product_image;
+        $product->save();
+
+        // if product is found, immediately after creation, redirect component state to show the product
+        if ($product) {
+
+            $this->product = $product;
+            $this->viewProduct($this->product->id);
+        }
+
+    }
+
+
+    /**
      * Function that allows you ro dynamically sort the products table, by any of the available columns
      * @param $column
      * @return void
@@ -492,7 +570,8 @@ class Products extends Component
 
             $this->sortDirection = $this->sortDirection == 'asc' ? 'desc' : 'asc';
 
-        } else {
+        }
+        else {
 
             $this->reset('sortDirection');
             $this->sortColumn = $column;
@@ -523,11 +602,15 @@ class Products extends Component
 
         if (!$this->product) {
 
-            $this->errorMessage = "That product is not found!!";
+            $this->code = 'danger';
+            session()->flash('message', 'Product Not Found!');
 
-        } else {
+        }
+        else {
 
             $this->product->addLike();
+            $this->code = 'success';
+            session()->flash('message', 'Like has been added!');
 
         }
 
@@ -545,11 +628,14 @@ class Products extends Component
 
         if (!$this->product) {
 
-            $this->errorMessage = "That product is not found!!";
+            $this->code = 'danger';
+            session()->flash('message', 'Product Not Found!');
 
         } else {
 
             $this->product->addDislike();
+            $this->code = 'success';
+            session()->flash('message', 'Dislike has been added!');
 
         }
 
@@ -569,7 +655,12 @@ class Products extends Component
 
         $seeder = new DatabaseSeeder();
         $seeder->run();
+
         redirect()->route('products.index');
+
+        $this->code = 'success';
+        session()->flash('message', 'Congrats!! The migration has been added & the seeder has been added. You may now perform CRUD Operations');
+
     }
 
     /**
@@ -578,8 +669,13 @@ class Products extends Component
      */
     public function restoreAll(): void
     {
+
         $this->products = Product::onlyTrashed()->restore();
+
+        $this->code = 'success';
+        session()->flash('message', 'Products Restored!');
         $this->resetResults();
+
     }
 
     /**
@@ -589,18 +685,25 @@ class Products extends Component
      */
     public function restore($product_id): void
     {
+
         $this->product = Product::withTrashed()->find($product_id)->restore();
 
         if (!$this->product) {
 
-            $this->errorMessage = "That product is not found!!";
+            $this->code = 'danger';
+            session()->flash('message', 'Product Not Found!');
 
-        } else {
+        }
+        else {
 
             $this->viewProduct($this->product->id);
             $this->resetResults();
 
+            $this->code = 'success';
+            session()->flash('message', 'Product Restored!');
+
         }
 
     }
+
 }

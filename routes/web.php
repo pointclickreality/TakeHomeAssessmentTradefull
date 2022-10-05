@@ -15,3 +15,4 @@ use App\Http\Controllers\ProductsController;
 
 Route::get('/', [ProductsController::class,'index'])->name('index');
 Route::resource('products',ProductsController::class);
+Route::get('user-profile/{user_id}', [ProductsController::class,'viewUserProfile'])->name('users.show');
