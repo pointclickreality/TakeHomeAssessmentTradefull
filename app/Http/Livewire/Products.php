@@ -107,7 +107,8 @@ class Products extends Component
              */
             if ($product_id) {
 
-                $product = Product::where('id', $product_id)->with('comments')->exists();
+                $product = Product::where('id', $product_id)
+                    ->exists();
 
                 if ($product) {
 
@@ -139,6 +140,7 @@ class Products extends Component
             }
             // get products & comments for a provided user_id
             if ($user_id) {
+
                 $this->viewUserProfile($user_id);
 
             }
@@ -188,7 +190,9 @@ class Products extends Component
     public function editProduct($product_id): void
     {
 
-        $this->product = Product::where('id', $product_id)->with('comments')->first();
+        $this->product = Product::where('id', $product_id)
+            ->with('comments')
+            ->first();
 
         if (!$this->product) {
 
@@ -220,12 +224,15 @@ class Products extends Component
 
         if ($product_id) {
 
-            $product = Product::findOrFail($product_id)->delete();
+            $product = Product::findOrFail($product_id)
+                ->delete();
+
             $this->code = 'danger';
             session()->flash('message', 'Product has been deleted!');
 
             $this->resetResults();
 
+            // only perform an actual redirect if the provided route is coming from any other route than ProductsController@index
             if ($this->route == 'Controller') {
 
                 redirect()->route('products.index');
@@ -271,7 +278,8 @@ class Products extends Component
             $this->code = 'danger';
             session()->flash('message', 'The user is Not Found !');
 
-        } else {
+        }
+        else {
 
             $this->randomImage = $this->user->profile_url;
             $this->randomName = $this->user->name;
@@ -280,13 +288,13 @@ class Products extends Component
             $this->email = $this->user->email;
             $this->phone = $this->user->phone;
 
-
             if ($this->user->comments()->count() > 0){
 
                 $this->productsCount = $this->user->products()->count();
                 $this->commentsCount = $this->user->comments()->count();
                 $this->likesCount = $this->user->comments()->sum('likes');
                 $this->dislikesCount = $this->user->comments()->sum('dislikes');
+
             }
             else{
 
@@ -327,6 +335,7 @@ class Products extends Component
             ])
                 ->with('comments')
                 ->with('category');
+
         }
 
         // loop products when search columns are present so that we can filter the results based on provided params
@@ -409,6 +418,7 @@ class Products extends Component
             $products;
 
         }
+        // this step is in place to prevent errors, when the migration doesn't exist
         else {
 
             $products = [];
@@ -417,7 +427,7 @@ class Products extends Component
 
         return view('livewire.products', [
 
-            'products' => $products ? $products->paginate(10) : [],
+            'products' => count($products) ? $products->paginate(10) : [],
         ]);
 
     }
