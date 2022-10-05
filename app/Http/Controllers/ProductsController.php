@@ -43,15 +43,8 @@ class ProductsController extends Controller
     public function index(Request $request):View
     {
 
-        // $homeSeo = HomeSeoModel::all();
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         $homeLink = "http://$_SERVER[HTTP_HOST]";
-        // $homeTitle = $homeSeo[0]['title'];
-
-        // $homeShareTitle = $homeSeo[0]['share_title'];
-        // $homeDescription = $homeSeo[0]['description'];
-        // $homeKeywords = $homeSeo[0]['keywords'];
-        // $homeImage = $homeLink."/".$homeSeo[0]['page_img'];
         $homeTitle = 'Take Home assessment';
         $homeShareTitle = 'Take Home assessment - BackEnd Developer - JD Hawkins';
         $homeDescription = 'This is an assessment to show my skill as a Laravel Developer';
@@ -65,11 +58,11 @@ class ProductsController extends Controller
         SEOMeta::setCanonical($actual_link);
 
         // <!--FaceBook-->
-        OpenGraph::addImage($homeImage);
         OpenGraph::setTitle($homeTitle);
         OpenGraph::setDescription($homeDescription);
         OpenGraph::setUrl($actual_link);
         OpenGraph::setSiteName($homeShareTitle);
+
         $action = 'viewHome';
         $product_id = null;
         $user_id = $this->user_id;

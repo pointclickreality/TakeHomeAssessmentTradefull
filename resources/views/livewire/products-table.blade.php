@@ -370,7 +370,14 @@
                             >
                                 <img src="{{$root}}{{$avatarsFolder}}{{$product->user->profile_url}}" class="" alt="">
                             </div>
-                            <span class="text-gray-600 fw-bold d-block fs-6">{{$product->user->name}}</span>
+                            <span
+                                class="text-gray-600 fw-bold d-block fs-6"
+                                wire:click="viewUserProfile({{$product->user->id}})"
+                                data-bs-toggle="tooltip"
+                                data-bs-custom-class="tooltip-inverse"
+                                data-bs-placement="top"
+                                title="Click here to view all products for this user {{$product->user->name}}"
+                            >{{$product->user->name}}</span>
                         </div>
                         <a href="#"
                            class="text-dark fw-bold text-hover-primary d-block mb-1 fs-6">{{$product->user->job_title}}</a>
