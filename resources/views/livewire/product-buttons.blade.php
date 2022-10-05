@@ -72,7 +72,7 @@
                 title="View More Products {{$product->user->name}}"
         >
             <i class="bi bi-person fs-4 me-2"></i>
-            More Products by {{$product->user->name}}
+            View More by {{$product->user->name}}
         </button>
         <button type="button"
                 class="btn btn-danger"
@@ -88,32 +88,44 @@
         <hr/>
         <div class="btn-group btn-group-justified">
             <a href="{{route('products.create')}}"
-               class="btn btn-dark"
-
+               class="btn btn-outline-info"
+               data-bs-toggle="tooltip"
+               data-bs-custom-class="tooltip-inverse"
+               data-bs-placement="top"
+               title="This button allows you to visit the CRUD Laravel :GET /products/create route"
             >
                 <i class="bi bi-images fs-4 me-2"></i>
                 Create via Laravel Route
             </a>
             <a href="{{route('products.show', $product->id)}}"
-               class="btn btn-dark"
-
+               class="btn btn-ouline-success"
+               data-bs-toggle="tooltip"
+               data-bs-custom-class="tooltip-inverse"
+               data-bs-placement="top"
+               title="This button allows you to visit the CRUD Laravel :GET /products/{:product_id}/show route"
             >
                 <i class="bi bi-eye fs-4 me-2"></i>
                 Show via Laravel Route
             </a>
             <a href="{{route('products.edit', $product->id)}}"
-               class="btn btn-dark"
-
+               class="btn btn-outline-warning"
+               data-bs-toggle="tooltip"
+               data-bs-custom-class="tooltip-inverse"
+               data-bs-placement="top"
+               title="This button allows you to visit the CRUD Laravel :GET /products/{:product_id}/edit route"
             >
                 <i class="bi bi-pen fs-4 me-2"></i>
                 Edit via Laravel Route
             </a>
             <a href="{{route('users.show', $product->user->id)}}"
-               class="btn btn-dark"
-
+               class="btn btn-outline-dashed"
+               data-bs-toggle="tooltip"
+               data-bs-custom-class="tooltip-inverse"
+               data-bs-placement="top"
+               title="This button allows you to visit the CRUD Laravel :GET /user-profile/{:user_id} route"
             >
                 <i class="bi bi-person fs-4 me-2"></i>
-                Profile via Laravel Route
+                View Profile via Laravel Route
             </a>
         </div>
     @endif
