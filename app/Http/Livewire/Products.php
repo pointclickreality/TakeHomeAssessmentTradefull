@@ -427,7 +427,7 @@ class Products extends Component
 
         return view('livewire.products', [
 
-            'products' => count($products) ? $products->paginate(10) : [],
+            'products' => $products ? $products->paginate(10) : [],
         ]);
 
     }
@@ -536,33 +536,28 @@ class Products extends Component
         $product->status = $this->status;
         $product->product_category_id = $this->product_category_id;
 
-        // only update these params if the incoming data is expecting to create the product
-        if ($this->action == 'createProduct') {
-
-            // save the other params associated with product, such as user & category
-            $product->user_id = $this->user_id;
-            $product->dislikes = 0;
-            $product->likes = 0;
-            $product->sales = 0;
-
-        }
-        else {
-
             $product->user_id = $this->product->user_id;
             $product->likes = $this->product->likes;
             $product->dislikes = $this->product->dislikes;
             $product->sales = $this->product->sales;
-
-        }
 
         $product->description = $this->description;
         $product->product_image = $this->product_image;
         $product->save();
 
         // if product is found, immediately after creation, redirect component state to show the product
-        if ($product) {
+        if (!$product) {
+
+            $this->code = 'danger';
+            session()->flash('message', 'Something Went Wrong Please Try Aagain !');
+
+        }
+        else{
 
             $this->product = $product;
+            $this->code = 'success';
+            session()->flash('message', 'Product has been updated !');
+
             $this->viewProduct($this->product->id);
         }
 
