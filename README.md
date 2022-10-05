@@ -2,7 +2,7 @@
 
 
 
-## Welcome to My Take Home Assestment - JD Hawkins
+## Welcome to My Take Home Assessment - JD Hawkins
 
 This application will demonstate my development skills as a FULL STACK Developer. This includes all aspects of development, such as Front-End/Back-End Logic, Database, & Front-end UI
 
@@ -10,7 +10,7 @@ The concept is that a user can create NFT products, & users can leave comments o
 You are also able to Edit, Delete, Like or Dislike products & the same applies for any comments.
 
 
-Please accept this application as a submission for my take home assestment.
+Please accept this application as a submission for my take home Assessment.
 ## Getting Started - Step 1
 
 To try to make this application as intuitive as possible a number of functions have been moved directly to the application interface, so the need to

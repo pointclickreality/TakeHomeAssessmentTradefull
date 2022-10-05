@@ -1,7 +1,7 @@
 {
     "name": "laravel/laravel",
     "type": "project",
-    "description": "Tradefull Assestment",
+    "description": "Tradefull Assessment",
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {

@@ -260,7 +260,7 @@ class Products extends Component
 
         $this->action = 'viewHome';
         $this->homeTitle = 'Products List';
-        $this->homeDescription = 'This is my submission to Tradefull assestment, for BackEnd Developer role!';
+        $this->homeDescription = 'This is my submission to Tradefull assessment, for BackEnd Developer role!';
         $this->emitSelf('refreshComponent');
         $this->emit('refreshComponent');
 

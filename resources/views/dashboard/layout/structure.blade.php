@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
 Author: Jardarrius Hawkins
-Product Name: LARAVEL 9 Take Home Assestment
+Product Name: LARAVEL 9 Take Home Assessment
 Contact: itssimplescience@gmail.com
 -->
 <html lang="en">
@@ -22,7 +22,7 @@ Contact: itssimplescience@gmail.com
 
 
     <meta property="og:locale" content="en_US" />
-    <meta property="og:site_name" content="JD Hawkins | Take Home Assestment" />
+    <meta property="og:site_name" content="JD Hawkins | Take Home Assessment" />
 
     {{-- <base href=""> --}}
     <link rel="canonical" href="{{\Illuminate\Support\Facades\URL::to('/')}}" />
