@@ -119,17 +119,25 @@ class Products extends Component
 
                         $this->viewProduct($product_id);
 
-                    } elseif ($this->action == 'editProduct') {
+                    }
+                    elseif ($this->action == 'editProduct') {
 
                         $this->editProduct($product_id);
 
-                    } elseif ($this->action == 'deleteProduct') {
+                    }
+                    elseif ($this->action == 'deleteProduct') {
 
                         $this->deleteProduct($product_id);
 
                     }
 
+
                 }
+
+            }
+            elseif ($this->action == 'createProduct') {
+
+                $this->createProduct();
 
             }
             else {
