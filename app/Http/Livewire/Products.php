@@ -563,7 +563,6 @@ class Products extends Component
 
     }
 
-
     /**
      * Function that allows you ro dynamically sort the products table, by any of the available columns
      * @param $column
