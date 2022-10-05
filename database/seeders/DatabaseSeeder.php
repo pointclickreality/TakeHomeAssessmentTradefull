@@ -23,15 +23,16 @@ class DatabaseSeeder extends Seeder
 
         // loop each user
         $users->each(function ($user) {
-            // lets make products for each users
-            $products = Product::factory()->count(rand(2, 10))->create([
+            // lets make  2 to 25 products for each users
+            $products = Product::factory()->count(rand(2, 25))->create([
                 'user_id' => $user->id,
             ]);
 
             // loop products
             $user->products()->each(function ($product) {
-                // Create 10 Comments
-                $comments = Comment::factory()->count(rand(3, 15))->create([
+
+                // create at least 2-4 comments per user for each product that exists
+                $comments = Comment::factory()->count(rand(2, 4))->create([
                     'product_id' => $product->id,
                     'user_id' => $product->user->id,
                 ]);

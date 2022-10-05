@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->integer('dislikes')->default(0);
             // foreign keys
             $table->string('comment_id')->nullable();
-            $table->foreignId('product_id')->constrained();
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
             $table->softDeletes();
