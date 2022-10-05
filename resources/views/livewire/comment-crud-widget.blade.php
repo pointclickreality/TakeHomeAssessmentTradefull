@@ -33,7 +33,9 @@
                             <br/>
                             (eg: ProductView or userProfileView)
                             <br/>
-                            You can also CREATE new Comments, by entering something into the comment body, then click "Add Comment"
+                            You can also CREATE new Comments, by entering something into the comment body, then click "Add Comment".
+                            Since AUTH is not enabled in this app, each time you visit a product page, a randomUser is selected from the collection & you are able to post a comment as that user.
+
                           </span>
                 </div>
             </div>

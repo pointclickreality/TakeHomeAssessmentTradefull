@@ -123,8 +123,7 @@
                                 <!--end::User-->
                                 <!--begin::Actions-->
                                 <div class="d-flex my-4">
-                                    <a href="mailto:itssimplescience@gmail.com" class="btn btn-sm btn-primary me-2"
-                                       data-bs-toggle="modal" data-bs-target="#kt_modal_offer_a_deal">Hire Me</a>
+                                    <a href="mailto:itssimplescience@gmail.com" class="btn btn-sm btn-primary me-2">Hire Me</a>
                                 </div>
                                 <!--end::Actions-->
                             </div>

@@ -72,7 +72,7 @@
                 title="View More Products {{$product->user->name}}"
         >
             <i class="bi bi-person fs-4 me-2"></i>
-            More Products
+            More Products by {{$product->user->name}}
         </button>
         <button type="button"
                 class="btn btn-danger"
@@ -87,26 +87,33 @@
         </button>
         <hr/>
         <div class="btn-group btn-group-justified">
+            <a href="{{route('products.create')}}"
+               class="btn btn-dark"
+
+            >
+                <i class="bi bi-images fs-4 me-2"></i>
+                Create via Laravel Route
+            </a>
             <a href="{{route('products.show', $product->id)}}"
                class="btn btn-dark"
 
             >
                 <i class="bi bi-eye fs-4 me-2"></i>
-                Show via Route
+                Show via Laravel Route
             </a>
             <a href="{{route('products.edit', $product->id)}}"
                class="btn btn-dark"
 
             >
                 <i class="bi bi-pen fs-4 me-2"></i>
-                Edit via Route
+                Edit via Laravel Route
             </a>
             <a href="{{route('users.show', $product->user->id)}}"
                class="btn btn-dark"
 
             >
                 <i class="bi bi-person fs-4 me-2"></i>
-                Profile via Route
+                Profile via Laravel Route
             </a>
         </div>
     @endif
